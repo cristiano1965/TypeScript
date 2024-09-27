@@ -1,0 +1,76 @@
+// esempio di funzione che accetta un oggetto con parametri tipizzati
+function pippo(dati: { id: number; nome: string }) {
+  console.log(dati.id, dati.nome);
+}
+const valori = { id: 5, nome: "pluto" }; // questo inizializza l'oggetto
+pippo(valori); // passa oggetto alla funzione
+
+// esempio di array a contenuto variabie, 
+// tipo numerico e qualsiasi tipo (any: posso inserirci qualsiasi tipo di valore)
+const array: number[] = [1, 2, 3];
+const arrAny: any[] = [1, "2", true];
+
+// la tupla è un array con dimensione fissa e tipologia fissa dove i tipi si dichiarano dentro l'array
+nell 'esempio sono solo 2 elementi,il primo numerico e secondo string
+const tupla: [number, string] = [4, "ciao"];
+
+string, number, boolean, object e array esistono sia in JS che TS, mentre tupla, enum, any, union e custom type esistono solo in TS
+
+la union consente di specificare diverse tipologie di dato accettate da una variabile; nell'esempio la variabile accetta solo valori stringa o numero o array di stringhe (se provo a metterci un boolean mi darà errore)
+let prova: string | number | string[] 
+
+qui invece accetta un array composto da qualsiasi tipo oppure un numero
+let prova1: any[] | number 
+
+------------------
+Con custom type definiam un nostro tipo, che si può poi usare
+Nell'esempio definisco il mio tipo "Persona" (composto da un  oggetto con due attributi di tipo stringa) e una variabile persona di tipo "Persona" che vado ad inizializzare ed a passare ad una funzione che accetta un parametro "personaggio" di tipo "Persona"
+type Persona = {
+  name: string,
+  cognome: string
+}
+let persona: Persona
+persona = {nome='cris', cognome:'petr'}
+function trovaPersona(personaggio: Persona )
+------------------
+Gli enum sono enumerati a cui assegnamo delle etichette ed opzionalmente anche un valore (se non assegnato parte da 0, 1, 2....)
+enum Ruolo {
+  ADMIN = 'admin',
+  USER = 'user',
+  GUEST = 'guest'
+} 
+
+cons persona = {
+  nome: 'mario',
+  cognome: 'rossi',
+  ruolo: Ruolo.ADMIN
+}
+
+if (persona.ruolo == Ruolo.ADMIN) // oppure == 'admin'
+----------------------
+inference e parametri funzione non passati
+inference consente di NON definire esplicitamente il tipo di una variabile e lo determina in base al suo valore iniziale
+function somma(num1: number, num2 = 0){
+  console.log(nume + num2)
+}
+somma(5)
+Nell'esempio num2, pur non dichiarato, diventa number perchè il suo valore iniziale è uno zero numerico, quindi posso  chiamare la funzione solo con il parametro1, se invece chiamo somma(5, 3) num2 assumerà il valore 3
+-------------------------------------------------------
+Per le funzioni possiamo definire anche il tipo di valore di ritorno dalla funzione (ove non specificato ci pensa inference)
+Nell'esempio precedente siccome num1 e num2 sono number e non facciamo anche che ritornare la loro somma, il tipo di ritorno (per inference) è number; avremmo quindi poturo scrivere come sotto per dichiarare che il ritorno è un number (il ? vicino a num2 indica che il parametro è opzionale)
+
+function somma(num1: number, num2?: number): number
+
+Se la funzione ritorna valori diversi a seconda di quello che fa diciamo con :any che può ritornare qualsiasi tipo, se invece non ritorna nulla possiamo usare :void
+-----------------------------------------------------------
+assegnare funzioni ad una variabile
+Supponiamo di avere la solita funzione somma definita come sopra; la assegnamo ora ad una variabile definendola di tipo arrow function (cioè ()=>) e specificando quali tipi ha in ingresso ed in uscita, gli assegniamo poi la funzione e quando usiamo la variabile dobbiamo passarle valori compatibili con la "firma" della funzione (parametri in e parametri out)
+
+let prova: (x: number, y:number) => number
+prova = somma
+
+console.log(prova(5,5))
+
+Se provassi a fare prova = altraFunzione
+anche questa seconda funzione dovrà avere la stessa firma di somma altrimenti il JS si spacca.
+-------------------------------------------------------------- 

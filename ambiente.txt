@@ -1,0 +1,17 @@
+Typescript è un javascript più ricco in quanto contiene tipizzazione dei dati (statica) che a differenza di JS è dinamica.
+
+Si cimpila un file .ts per avere il .js eseguibile nel browser.
+
+serve NODE.JS (per npm) e Visual studio code, dove installiamo il compilatore typescript con "npm i -g typescript"
+(-g vuol dire installa globalmente)
+
+Facciamo poi dei file con estensione .ts che compiliamo da riga comandi con "tsc <nome del file.ts>" ed otteniamo il corrispondente file .js che inseriamo poi come script nel nostro index.html
+
+"tsc" sta per  typescript compile
+
+se faccio "tsc <nome del file.ts> -w" (oppure --watch)
+si mette in watch mode su quel file ed ogni volta che questo cambia lo ricompila in automatico 
+
+Se ho parecchi .ts e voglio che quando si modificano vengano ricompilati senza specificarli uno per uno scrivo "tsc --init" e viene creato un nuovo file "tsconfig.json" (vedi sotto spiegazione) ed ora scrivendo "tsc -w" qualsiasi .ts modificato viene ricompilato automaticamente
+
+Nel tsconfig.json si può specificare con "excludes" un array di file/percorsi da escludere dalla compilazione tsc (se inserissi "./server.ts" verrebbero ricompilati tutti i file.ts tranne questo; importante: se metto "excludes" inserire sempre anche "node_modules" per escluderla dal watch) e si può anche specificare con "include" la lista dei soli moduli che mi interessa ricompilare; il parametro "target" è impostato automaticamente a "es2016" che rappresenta ultima versione di js, se mettiamo "es5" usiamo versione precedente magari per browser un pò più vecchiotti; il parametro "sourceMap" (disabilitato di default) quando abilitato consente di vedere nel browser, nella lista dei sorgenti, oltre che il .js generato anche il sorgente del file .ts e di farci anche il debug sopra (viene creato il file .js.map quando questa opzione è attiva che serve solo al browser e quando l'opzione è disattivata può essere cancellato); l'opzione "rootDir" consente di specificare la cartella in cui effettuare il watch dei sorgenti (oppure rootDirs contiene array delle cartelle), mentre l'opzione "outDir" specifica la cartella dove depositare i compilati .js mantenendo in ouput la stessa struttura di cartella in cui sono presenti in input i sorgenti .ts (attenzione però che nell'index.html va specificato il percorso completo dove il browser dovrà trovare i file .js compilati!!!)
