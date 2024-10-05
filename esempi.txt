@@ -74,3 +74,341 @@ console.log(prova(5,5))
 Se provassi a fare prova = altraFunzione
 anche questa seconda funzione dovrà avere la stessa firma di somma altrimenti il JS si spacca.
 -------------------------------------------------------------- 
+Le classi
+
+// non ho un costruttore per cui ne inizializzo gli attributi
+class Persona{
+  nome: string = "luca"
+  cognome: string = "rossi"
+}
+
+// assegno alla var persona di tipo Persona una nuova istanza della classe
+let persona: Persona = new Persona()  
+
+utilizzando un costruttore abbiamo
+class Persona {
+  //proprietà
+  nome: string;
+  cognome: string;
+
+  // i valori ricevuti dalla new vengono copiati nell'istanza di classe
+  constructor(nm: string, cog: string) {
+    this.nome = nm;
+    this.cognome = cog;
+  }
+}
+
+// assegno alla var persona e persona2 di tipo Persona una nuova istanza della classe (un nuovo oggetto) con i valori passati al costruttore
+let persona: Persona = new Persona("luca", "rossi");
+let persona2: Persona = new Persona("mario verdi", "rossi");
+   --------     --------
+facciamo un paio di metodi ed usiamoli
+class Persona {
+  nome: string;
+  cognome: string;
+
+  constructor(nm: string, cog: string) {
+    this.nome = nm;
+    this.cognome = cog;
+  }
+
+  //metodi
+  presenta() {
+    console.log(`ciao ${this.nome} ${this.cognome}`);
+  }
+
+  // accetta in input una persona
+  saluta(persona: Persona) {
+    console.log(
+      `sono ${this.nome} ${this.cognome}; saluti ${persona.nome} ${persona.cognome}`
+    );
+  }
+}
+
+// assegno alla var persona di tipo Persona una nuova istanza della classe
+let persona: Persona = new Persona("luca", "rossi");
+let persona2: Persona = new Persona("mario", "versi");
+
+persona.presenta();
+persona2.saluta(persona);
+
+----------------------
+modificatori private e public
+non scrivendo nulla quando definiamo una classe, i suoi attributi e metodi sono per default public, se invece inseriamo private allora li rendiamo privati e non accessibili dall'esterno
+
+nell'esempio persona2.cognome="pippo" da errore perchè cognome è privato, usiamo invece la funzione cambiaCognome per fare l'operazione
+class Persona {
+  private nome: string;
+  private cognome: string;
+
+  constructor(nm: string, cog: string) {
+    this.nome = nm;
+    this.cognome = cog;
+  }
+
+  //metodi
+  presenta(): void {
+    console.log(`ciao ${this.nome} ${this.cognome}`);
+  }
+
+  // accetta in input una persona
+  saluta(persona: Persona): void {
+    console.log(
+      `sono ${this.nome} ${this.cognome}; saluti ${persona.nome} ${persona.cognome}`
+    );
+  }
+
+  cambiaCognome(nuovoCognome: string): void {
+    this.cognome = nuovoCognome;
+  }
+}
+
+// assegno alla var persona di tipo Persona una nuova istanza della classe
+let persona: Persona = new Persona("luca", "rossi");
+let persona2: Persona = new Persona("mario", "versi");
+
+persona.presenta();
+persona2.saluta(persona);
+//persona2.cognome = "pippo";
+persona2.cambiaCognome("pippone");
+persona2.presenta();
+
+------ 
+costruttore con dichiarazione ed assegnazione implicita
+
+possiamo fare così per evitare di dichiarare le due prop private e poi assegnare con il costruttore this.nome e this.cognome
+
+class Persona {
+  constructor(private nome: string, private cognome: string) {}
+
+----------
+modificatore readonly serve per avere una proprietà in sola lettura dopo la sua inizializzazione con il costruttore; nell'esempio sotto dopo la chiamata al costruttore il nome non potrà più essere cambiato neanche dai metodi della stessa classe
+
+class Persona {
+  constructor(private readonly nome: string, private cognome: string) {}
+}
+let persona: Persona = new Persona("luca", "rossi");
+--------
+ereditarierà di una classe si usa extends e la  classe figlia eredita tutte le prop ed i metodi della classe padre (la super classe)
+IN questo esempio studente (di tipo Studente) eredita tutto da Persona
+class Persona {
+  constructor(private nome: string, private cognome: string) {}
+
+  //metodi
+  presenta(): void {
+    console.log(`ciao ${this.nome} ${this.cognome}`);
+  }
+}
+
+class Studente extends Persona {}
+
+let studente: Studente = new Studente("mario", "rossi");
+studente.presenta();
+
+nel caso in cui la classe figlia aggiunge dei parametri suoi non presenti nel padre dobbiamo usare "super()" nel costruttore della classe figlia passando i parametri ricevuti al padre come da esempio
+class Persona {
+  constructor(private nome: string, private cognome: string) {}
+
+  //metodi
+  presenta(): void {
+    console.log(`ciao ${this.nome} ${this.cognome}`);
+  }
+}
+
+class Studente extends Persona {
+  constructor(nm: string, cog: string, private materiaPreferita: string) {
+    super(nm, cog);
+  }
+}
+
+let studente: Studente = new Studente("mario", "rossi", "latino");
+studente.presenta();
+-------------------
+protected: nell'esempio di cui sopra il nome e cognome sono private, quindi modificabili solo da metodi all'interno della classe Persona, quindi neanche Studente li puo cambiare, se invece li mettiamo Protected soo cambiabili ANCHE dalla classe figlia Studente
+
+----
+static: antepondendo ad una proprietà oppure ad un metodo di classe la keyword static possiamo far riferimento a quella proprietà o metodi direttamente usando la classe
+In questo esempio il metodo saluta è statico quindi lo posso usare chiamando direttamente la classe (se provo a chiamarlo dall'oggetto mi da' errore!!!)
+class Persona {
+  constructor(protected nome: string, protected cognome: string) {}
+
+  //metodi
+  presenta(): void {
+    console.log(`ciao ${this.nome} ${this.cognome}`);
+  }
+
+  static saluta(persona: Persona): void {
+    console.log(`ciao ${persona.nome} ${persona.cognome}`);
+  }
+}
+
+let persona: Persona = new Persona("mario", "rossi");
+let persona2: Persona = new Persona("verdi", "ricci");
+
+Persona.saluta(persona);
+----- 
+con abstract definiamo una classe "tipo" che NON può essere istanziata direttamente con new, ma funge da prototipo per le classi derivate che la implementano (con extend); i metodi e proprietà definiti con abstract nella classe astratta presentano solo la firma e DEVONO TUTTE essere implementate nella classe figlia (possono esserci anche metodi e prop non abstract nella classe abstract e queste non devono essere definite nella classe derivata)
+
+nell'esempio la classe astratta Persona definisce solo i metodi con la firma (parametri e restituzione) senza specificare cosa fanno, la classe derivata Studente DEVE implementare i due metodi e scrivere cosa fanno (ed in più ha un suo metodo specifico "ciao()"che non proviene da Persona)
+
+In questo modo evitiamo che si possano instanziare "Persona" e obbligatoriamnete instanziamo Studente perchè obbligatoriamente ha u nome e cognome e lo specializziamo con la sua materia materiaPreferita
+
+abstract class Persona {
+  constructor(protected nome: string, protected cognome: string) {}
+
+  //metodi
+  abstract presenta(): void;
+}
+
+class Studente extends Persona {
+  constructor(nm: string, cog: string, private materiaPreferita: string) {
+    super(nm, cog);
+  }
+
+  // questo implementa il metodo abstract
+  presenta(): void {
+    console.log(`ciao ${this.nome} ${this.cognome}`);
+  }
+
+  ciao(): void{
+    console.log("ciao")
+  }
+}
+
+let studente: Studente = new Studente("mario", "rossi", "latino");
+studente.presenta();
+----------------------------
+classe singleton con costruttore privato statico
+Si usa quando vogliamo avere sono UNA SINGOLA instanza di una CLASSE (e la sua inizializzazione avviene all'interno della classe stessa)
+class Preside {
+  private static instance: Preside;
+
+  private constructor(private nome: string, private cognome: string) {}
+
+  static getInstance() {
+    if (Preside.instance) {
+      return this.instance;
+    }
+    this.instance = new Preside("marco", "verdi");
+    return this.instance;
+  }
+
+  presenta() {
+    console.log(`buongiorno, sono il preside ${this.nome} ${this.cognome}`);
+  }
+}
+
+Preside.getInstance().presenta();
+-------------------------------------
+abbiamo poi le interfacce che, a differenza delle classi abstract che possono avere metodi abstract o normali, devono avere solo metodi definiti con la firma e gli attributi devono essere definiti ma non inizializzati e non psoono essere usati i modificatoti come private, public, ecc. ma possono essere solo readonly (cioè letti dopo loro inizializzazione con il costruttore da parte della classe che implementa interfaccia).
+Le interfacce vengono poi implementate nelle classi.
+Esempio: dispositivo è una interfaccia, mentre computer, smartphone sono classi che derivano da dispositivo e ne implementano i propri metodi.
+A differenza di extends (classe figlia che eredita ed estende le funzionalità di una classe padre) che può estendere SOLO UNA classe padre, le classi che implementano una interfaccia ne possono implementare anche più di una (in questo caso devono implemenetare tutti gli attributi ed i metodi definiti nelle interfacce)
+Ecco un esempio
+
+interface Prova{
+  readonly nome: string
+
+  saluta():void
+}
+
+interface Querty{
+  scrivi():void
+}
+
+class X implements Prova, Querty{
+  nome: string
+
+  constructor(nome: string){
+    this.nome = nome
+  }
+  saluta(): void {
+    throw new Error("Method not implemented.")
+  }
+  scrivi(): void {
+    throw new Error("Method not implemented.")
+  }
+  
+}
+
+Per chiarire meglio facciamo una classe abstract Dispositivo che ha due proprietà e due metodi e poi deriviamo le classi figlie Telefono e Computer che ereditano attributi e metodi; il dispositivo di base non si connette ad internet ma Telefono e Computer si, quindi creo una interfaccia denominata "Internet", con il suo attributo "ip" ed il suo metodo "connettiInternet" che voglio implementare nelle classi Telefono e Computer; quindi ora dico che Telefono e Computer implementano l'interfaccia Internet e pertanto posso implementare e specializzare il suo contenuto (chiaramente siccome dispositivo ha un costruttore, questo lo devo implementare anche nelle classi figli con super)
+
+interface Internet {
+  ip: string;
+
+  connettiInternet(): void;
+}
+
+abstract class Dispositivo {
+  constructor(protected nome: string, protected anno: number) {}
+  abstract accedi(): void;
+  abstract spegni(): void;
+}
+
+class Telefono extends Dispositivo implements Internet {
+  ip: string;
+
+  constructor(nome: string, anno: number, ip: string) {
+    super(nome, anno);
+    this.ip = ip;
+  }
+  connettiInternet(): void {
+    console.log("Il telefono si connette");
+  }
+  accedi(): void {
+    console.log("Il telefono si accende....");
+  }
+  spegni(): void {
+    console.log("Il telefono si spegne....");
+  }
+}
+
+class Computer extends Dispositivo implements Internet {
+  constructor(nome: string, anno: number, ip: string) {
+    super(nome, anno);
+    this.ip = ip;
+  }
+  ip: string;
+  connettiInternet(): void {
+    console.log("Il computer si connette");
+  }
+  accedi(): void {
+    console.log("Il Computer si accende....");
+  }
+  spegni(): void {
+    console.log("Il Computer si spegne....");
+  }
+}
+------------------------
+generics: definiamo un tipo generico che verrà poi implementato con un tipo specifico quando utilizzato.
+Supponiamo di avere una classe Prova che accetta un tipo "T" generico e definisce un array vuoto del tipo "T" e che ha due metodi per aggiungere o rimuovere un item (avente stesso contenuto generico "T") ad un array.
+
+Quando vado ad instanziare la classe DEVO passargli il TIPO (esempio string o number) che verrà usato al posto del "T" e da quel momento in poi l'array sarà SOLO di quel tipo ed ogni tentativo di aggiungere o rimuovere items con contenuto diverso sarà impossibile
+
+class Prova<T>{
+  private lista: T[] = []
+
+  aggiungiItem(item: T){
+    this.lista.push(item)
+  }
+
+  rimuoviItem(item: T){
+    this.lista.splice(this.lista.indexOf(item,1))
+  }
+}
+
+const listaStringhe = new Prova<string>
+listaStringhe.aggiungiItem("luca")
+listaStringhe.aggiungiItem("marco")
+listaStringhe.aggiungiItem("anna")
+listaStringhe.rimuoviItem("luca")
+
+const listaNumeri = new Prova<number>
+listaNumeri.aggiungiItem(123)
+listaNumeri.aggiungiItem(456)
+listaNumeri.rimuoviItem(123)
+
+------------------------------------------
+i "decorators" sono funzioni che poi applichiamo all'interno di una classe
+
+
